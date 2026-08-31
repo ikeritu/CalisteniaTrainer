@@ -1,1 +1,512 @@
-PLACEHOLDER
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1769aa">
+<meta name="description" content="Entrenador personal de calistenia para principiantes, con progresión adaptativa y seguimiento local.">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Calistenia Trainer v1.4 RC · Seguridad y guía</title>
+<style>
+:root{
+  --bg:#f4f7fb;--card:#fff;--text:#17202a;--muted:#687384;--line:#dbe2ea;
+  --a:#1769aa;--g:#13866f;--y:#d97706;--r:#b42318;--vio:#6d4aff;--soft:#eef3f8
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{max-width:680px;margin:auto;padding:14px 14px 48px}.screen{display:none}.screen.on{display:block}
+h1{font-size:28px;margin:2px 0 6px}h2{font-size:21px;margin:0 0 10px}h3{font-size:16px;margin:12px 0 7px}
+p{margin:0 0 10px}.muted,.eyebrow{color:var(--muted)}.eyebrow{font-size:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:12px}
+button,input,select{font:inherit}button{border:0;border-radius:13px;padding:11px 12px;font-weight:750;cursor:pointer}
+.primary{background:var(--a);color:white}.secondary{background:var(--soft);color:var(--text)}.full{width:100%}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric{background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px}.metric small{display:block;color:var(--muted)}.metric strong{font-size:24px}
+.nav{position:sticky;bottom:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:rgba(255,255,255,.95);padding:7px;border:1px solid var(--line);border-radius:17px;backdrop-filter:blur(8px);margin-top:15px}
+.nav button{background:transparent;color:var(--muted);font-size:11px}.nav button.active{background:var(--soft);color:var(--a)}
+.session-list{display:grid;gap:8px}.session{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left}.session small{display:block;color:var(--muted)}
+.progress{height:8px;background:#e7ecf1;border-radius:99px;overflow:hidden;margin:10px 0 14px}.progress i{display:block;height:100%;background:var(--g);width:0}
+.anim{background:#eef2f6;border-radius:16px;padding:8px;margin:10px 0}svg{width:100%;display:block}
+.body{stroke:#17202a;stroke-width:8;stroke-linecap:round;fill:none}.bar{stroke:#475569;stroke-width:8}.head{fill:#17202a}
+.poseA{animation:a 2.1s infinite}.poseB{animation:b 2.1s infinite}@keyframes a{0%,44%{opacity:1}50%,94%{opacity:0}100%{opacity:1}}@keyframes b{0%,44%{opacity:0}50%,94%{opacity:1}100%{opacity:0}}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{border:1px solid var(--line);border-radius:13px;padding:10px}.stat small{display:block;color:var(--muted)}.stat b{font-size:20px}
+.counter{display:grid;grid-template-columns:50px 1fr 50px;gap:8px;align-items:center;margin:10px 0}.counter button{background:#fff;border:1px solid var(--line)}.counter output{text-align:center;font-size:28px;font-weight:800}
+.rpe{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.rpe button{background:#fff;border:1px solid var(--line);font-size:12px;padding:10px 4px}.rpe .sel{outline:3px solid #1769aa22;border-color:var(--a)}
+.timer{text-align:center;font-size:52px;font-weight:850;margin:20px}.line{border-bottom:1px solid var(--line);padding:9px 0}.line:last-child{border:0}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:3px 7px;font-size:11px;color:var(--muted)}
+.rec{border-left:5px solid var(--vio);background:#faf9ff}.rec.good{border-left-color:var(--g)}.rec.warn{border-left-color:var(--y)}.rec.bad{border-left-color:var(--r)}
+.decision{font-size:13px;font-weight:800}.decision.keep{color:var(--a)}.decision.up{color:var(--g)}.decision.down{color:var(--r)}
+.alert{border-radius:15px;padding:12px;margin-bottom:12px;border:1px solid var(--line)}.alert.warn{background:#fff9ed;border-color:#f1d7a5}.alert.good{background:#f2fbf8;border-color:#bfe6da}.alert.bad{background:#fff4f3;border-color:#efc0bc}
+.ladder{display:grid;gap:8px}.stepcard{display:grid;grid-template-columns:30px 1fr;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px}.stepnum{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-weight:800}.stepcard.current{border-color:var(--a);box-shadow:0 0 0 3px #1769aa18}.stepcard.current .stepnum{background:var(--a);color:white}.stepcard.done .stepnum{background:var(--g);color:white}
+input[type=number],select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}.mini{font-size:12px;color:var(--muted)}
+.installbar{display:none;gap:8px;align-items:center;background:#eef6ff;border:1px solid #bfd8ef;border-radius:15px;padding:10px 12px;margin-bottom:12px}
+.installbar.show{display:flex}.installbar .grow{flex:1}.onlineDot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--g);margin-right:5px}.offline .onlineDot{background:var(--r)}
+@media (display-mode: standalone){#installBar{display:none!important}}
+
+body.dark{--bg:#0f1720;--card:#17212c;--text:#f4f7fb;--muted:#aab5c2;--line:#304050;--soft:#223040}body.dark .metric,body.dark .session,body.dark .counter button,body.dark .rpe button,body.dark input,body.dark select{background:var(--card);color:var(--text)}
+body.sun{--bg:#fff;--card:#fff;--text:#000;--muted:#222;--line:#111;--soft:#eee}body.big button{min-height:52px;font-size:15px}
+.hero{background:linear-gradient(145deg,#1769aa,#0f4f83);color:#fff;border:0}.hero .muted,.hero .eyebrow{color:#e5f1fb}.hero .primary{background:#fff;color:#0f4f83}
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:max(8px,env(safe-area-inset-bottom));width:min(calc(100% - 20px),660px);grid-template-columns:repeat(6,1fr);z-index:20;box-shadow:0 8px 28px #0002}.app{padding-bottom:95px}.nav button{font-size:10px;padding:8px 2px}
+.steps{display:flex;gap:5px;margin:8px 0 12px}.steps i{height:5px;flex:1;border-radius:999px;background:var(--line)}.steps i.done{background:var(--g)}.steps i.current{background:var(--a)}
+.switchrow{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.switchrow:last-child{border:0}.toggle{width:52px;min-width:52px;height:31px;padding:3px;border-radius:999px;background:var(--line)}.toggle i{display:block;width:25px;height:25px;border-radius:50%;background:#fff;transition:.2s}.toggle.on{background:var(--g)}.toggle.on i{transform:translateX(21px)}
+.resume{border:2px solid var(--a);background:#eef6ff}.exerciseRow{padding:10px 0;border-bottom:1px solid var(--line)}.exerciseRow:last-child{border:0}.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.poseB{display:none}}
+
+.guidebtn{margin-top:9px}.safetyGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.safetyItem{border:1px solid var(--line);border-radius:14px;padding:11px;background:var(--card)}.safetyItem strong{display:block;margin-bottom:4px}.oktxt{color:var(--g)}.warntxt{color:var(--y)}.stoptxt{color:var(--r)}.faq details{border-bottom:1px solid var(--line);padding:10px 0}.faq details:last-child{border:0}.faq summary{font-weight:800;cursor:pointer}.faq details p{margin:8px 0 0;color:var(--muted)}.parkmap{display:grid;gap:9px}.parkitem{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:start;border:1px solid var(--line);border-radius:14px;padding:11px}.parkicon{width:40px;height:40px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:21px}.onboarding{position:fixed;z-index:100;inset:0;background:#0009;display:none;align-items:end;justify-content:center;padding:14px}.onboarding.show{display:flex}.onboardCard{width:min(100%,620px);background:var(--card);color:var(--text);border-radius:22px;padding:18px;box-shadow:0 20px 60px #0006}.onboardDots{display:flex;gap:5px;margin:8px 0 14px}.onboardDots i{height:5px;flex:1;background:var(--line);border-radius:99px}.onboardDots i.on{background:var(--a)}.painBtns{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.painBtns button{background:var(--card);border:1px solid var(--line);font-size:12px;padding:10px 4px}.painBtns .sel{outline:3px solid #1769aa22;border-color:var(--a)}.safetyBox{background:#fff7ed;border:1px solid #fed7aa;border-radius:14px;padding:11px;margin:10px 0}.stopBox{background:#fff1f0;border:1px solid #f0b7b3;border-radius:14px;padding:11px;margin:10px 0}.checklist label{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}.checklist label:last-child{border:0}.checklist input{margin-top:3px;transform:scale(1.25)}
+
+
+.programWeek{display:grid;grid-template-columns:42px 1fr;gap:11px;align-items:start;border:1px solid var(--line);border-radius:15px;padding:12px;margin-bottom:9px;background:var(--card)}
+.weekBadge{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--soft);font-weight:900;color:var(--a)}
+.programWeek.current{border-color:var(--a);box-shadow:0 0 0 3px color-mix(in srgb,var(--a) 12%,transparent)}
+.programWeek.current .weekBadge{background:var(--a);color:white}
+.programWeek.done .weekBadge{background:var(--g);color:white}
+.dayplan{display:grid;grid-template-columns:38px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.dayplan:last-child{border:0}.dayplan b{color:var(--a)}
+.evalbox{border:1px dashed var(--a);border-radius:15px;padding:12px;background:color-mix(in srgb,var(--card) 94%,#dceeff)}
+
+
+/* v1.4 RC */
+.sessionClock{display:flex;justify-content:space-between;gap:8px;margin:8px 0 12px}
+.clockbox{flex:1;border:1px solid var(--line);border-radius:14px;padding:9px 11px;background:var(--card)}
+.clockbox small{display:block;color:var(--muted)}.clockbox strong{font-size:20px}
+.chart{height:150px;display:flex;align-items:end;gap:7px;padding:10px 3px 0;border-bottom:1px solid var(--line)}
+.chartbar{flex:1;min-width:16px;background:var(--a);border-radius:7px 7px 0 0;position:relative}
+.chartbar span{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calcell{aspect-ratio:1;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;font-size:11px;background:var(--card)}
+.calcell.hit{background:var(--g);color:white;border-color:var(--g);font-weight:900}.calhead{font-size:10px;color:var(--muted);text-align:center}
+.pr{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.pr:last-child{border:0}
+.milestone{position:fixed;z-index:120;inset:0;display:none;place-items:center;background:#0007;padding:20px}.milestone.show{display:grid}.milestoneCard{max-width:420px;background:var(--card);border-radius:24px;padding:24px;text-align:center;box-shadow:0 24px 70px #0006}.milestoneIcon{font-size:58px}
+.animNote{font-size:11px;color:var(--muted);text-align:center;margin-top:-4px}
+.breathe{animation:breathe 3s infinite}@keyframes breathe{0%,100%{opacity:.55}50%{opacity:1}}
+
+</style></head>
+<body>
+<div id="onboarding" class="onboarding" aria-modal="true" role="dialog"><div class="onboardCard"><div class="eyebrow">Antes de empezar</div><h2 id="onboardTitle">Bienvenido</h2><div id="onboardDots" class="onboardDots"></div><div id="onboardBody"></div><div class="grid" style="margin-top:12px"><button id="onboardPrev" class="secondary">ATRÁS</button><button id="onboardNext" class="primary">SIGUIENTE</button></div></div></div>
+<div id="milestone" class="milestone"><div class="milestoneCard"><div class="milestoneIcon">🏆</div><h2 id="milestoneTitle">Nuevo hito</h2><p id="milestoneText" class="muted"></p><button id="milestoneClose" class="primary full">CONTINUAR</button></div></div>
+<div class="app">
+
+<section id="home" class="screen on">
+<div id="installBar" class="installbar">
+  <div class="grow"><strong>Instalar app</strong><div class="mini">Úsala como una app normal en el móvil.</div></div>
+  <button id="installBtn" class="primary">INSTALAR</button>
+</div>
+<div id="netStatus" class="mini" style="margin-bottom:8px"><span class="onlineDot"></span><span id="netText">Disponible sin conexión tras la primera carga.</span></div>
+<div class="eyebrow">Calistenia Trainer · v1.4 RC</div><h1>HOY</h1><p id="day" class="muted"></p>
+<div id="resumeBox"></div><div id="statusAlert"></div>
+<div class="card hero"><div class="eyebrow">Sesión recomendada</div><h2 id="rec"></h2><p id="recmeta" class="muted"></p><button id="startRec" class="primary full">EMPEZAR</button></div>
+<div class="grid" style="margin-bottom:12px"><div class="metric"><small>Esta semana</small><strong id="homeWeek">0/5</strong></div><div class="metric"><small>Dominada</small><strong id="homePull">1/5</strong></div></div><div class="card"><h2>Acceso rápido</h2><div id="sessionList" class="session-list"></div><button class="secondary full guidebtn" onclick="go('guide')">📘 GUÍA DE USO Y SEGURIDAD</button></div>
+</section>
+
+<section id="train" class="screen">
+<div class="eyebrow" id="step"></div><h1 id="ename"></h1>
+<div class="sessionClock"><div class="clockbox"><small>Tiempo de sesión</small><strong id="sessionTime">00:00</strong></div><div class="clockbox"><small>Ejercicio</small><strong id="exerciseTime">00:00</strong></div></div><div id="stepDots" class="steps"></div><div class="progress"><i id="prog"></i></div>
+<div id="coachCard" class="card rec"><div class="eyebrow">Entrenador adaptativo</div><h3 id="coachTitle"></h3><p id="coachText" class="muted"></p><div id="restHint" class="tag"></div></div>
+<div class="card">
+<p id="where" class="muted"></p><div id="anim" class="anim"></div>
+<div class="stats"><div class="stat"><small>Serie</small><b id="set"></b></div><div class="stat"><small>Objetivo</small><b id="target"></b></div></div>
+<div id="weightBox" style="display:none;margin-top:10px"><label class="muted">Peso por mancuerna (kg)</label><input id="weight" type="number" min="0" step=".5" value="5"></div>
+<div class="counter"><button id="minus">−</button><output id="count"></output><button id="plus">+</button></div>
+<h3>Esfuerzo</h3><div class="rpe"><button data-r="Fácil">🟢 Fácil</button><button data-r="Bien">🟡 Bien</button><button data-r="Difícil">🔴 Difícil</button></div>
+<h3>Técnica</h3><select id="techQuality"><option value="Buena">✓ Buena</option><option value="Regular">~ Regular</option><option value="Mala">✕ Mala / se rompió</option></select>
+<p id="tech" class="muted" style="margin-top:10px"></p>
+<h3>¿Hay dolor?</h3><div class="painBtns"><button data-pain="No">✅ No</button><button data-pain="Molestia">⚠️ Molestia</button><button data-pain="Dolor">🛑 Dolor</button></div><div id="painHelp" class="mini" style="margin-top:8px">El esfuerzo muscular es normal; el dolor agudo o repentino no lo es.</div><button id="barHelpBtn" class="secondary full" style="margin-top:10px">¿QUÉ BARRA USO?</button>
+<button id="complete" class="primary full">COMPLETAR SERIE</button><p id="msg" class="muted" style="margin-top:8px"></p>
+<div class="toolbar"><button id="prevExercise" class="secondary">← ANTERIOR</button><button id="pauseSession" class="secondary">⏸ PAUSAR</button></div>
+<button id="quit" class="secondary full" style="margin-top:8px">SALIR</button></div>
+</section>
+
+<section id="rest" class="screen"><div class="card"><div class="eyebrow">Descanso adaptativo</div><h2 id="restName"></h2><div class="timer" id="timer"></div><p id="restWhy" class="muted"></p><div class="grid"><button id="add15" class="secondary">+15 s</button><button id="skip" class="secondary">Saltar</button></div><button id="cont" class="primary full" style="margin-top:9px">CONTINUAR</button></div></section>
+
+<section id="done" class="screen"><div class="card"><div class="eyebrow">✓ Sesión guardada</div><h1 id="doneName"></h1><p class="muted">Se han recalculado variante, descanso y carga de trabajo.</p><div id="doneStats"></div><button class="primary full" onclick="go('coach')">VER RECOMENDACIONES</button></div></section>
+
+<section id="progress" class="screen">
+<div class="eyebrow">Tu evolución</div><h1>PROGRESO</h1>
+<div class="grid"><div class="metric"><small>Sesiones</small><strong id="mSessions">0</strong></div><div class="metric"><small>Series</small><strong id="mSets">0</strong></div><div class="metric"><small>Esta semana</small><strong id="mWeek">0/5</strong></div><div class="metric"><small>Cumplimiento</small><strong id="mCompliance">0%</strong></div></div>
+<div class="card" style="margin-top:12px"><h2>Últimas 6 semanas</h2><div id="sixWeekChart" class="chart"></div></div>
+<div class="card"><h2>Calendario</h2><div id="calendarTitle" class="mini" style="margin-bottom:8px"></div><div id="calendar" class="calendar"></div></div>
+<div class="card"><h2>Evolución por ejercicio</h2><select id="exerciseSelect"></select><div id="exerciseEvolution" class="chart"></div><p id="exerciseSummary" class="mini"></p></div>
+<div class="card"><h2>Récords personales</h2><div id="prs"></div></div>
+<div class="card"><h2>Bíceps</h2><div id="bicepsVolume"></div></div>
+<div class="card"><h2>Historial reciente</h2><div id="history"></div></div>
+<div class="grid"><button id="exportCsv" class="secondary">EXPORTAR CSV</button><button id="exportJson2" class="secondary">EXPORTAR JSON</button></div>
+</section>
+
+<section id="coach" class="screen">
+<div class="eyebrow">Fase 5 cerrada</div><h1>ENTRENADOR</h1>
+<div id="coachStatus"></div>
+<div id="recommendations"></div>
+<div class="card"><h2>Camino a la primera dominada</h2><div id="pullupLadder" class="ladder"></div></div>
+<div class="card"><h2>Bíceps</h2><div id="bicepsAdvice"></div></div>
+</section>
+
+
+
+<section id="guide" class="screen"><div class="eyebrow">Para empezar desde cero</div><h1>GUÍA Y SEGURIDAD</h1>
+<div class="card"><h2>Regla nº 1: esfuerzo ≠ dolor</h2><div class="safetyGrid"><div class="safetyItem"><strong class="oktxt">🟢 Esfuerzo normal</strong><span class="mini">Músculo cansado, respiración acelerada, sensación de trabajo que baja al descansar.</span></div><div class="safetyItem"><strong class="stoptxt">🛑 Para el ejercicio</strong><span class="mini">Dolor agudo o repentino, pinchazo, pérdida de fuerza inesperada, mareo importante o dolor en el pecho.</span></div></div><p class="mini" style="margin-top:10px">Si un síntoma es intenso, no cede o te preocupa, no continúes y busca valoración profesional.</p></div>
+<div class="card"><h2>Tu parque: qué barra usar</h2><p class="muted">Basado en la estructura que aparece en las fotos del parque.</p><div class="parkmap">
+<div class="parkitem"><div class="parkicon">↘️</div><div><strong>Flexión inclinada</strong><div class="mini">Usa una barra horizontal a la altura aproximada del pecho o cintura. Empieza por la más alta: cuanto más alta, más fácil.</div></div></div>
+<div class="parkitem"><div class="parkicon">↗️</div><div><strong>Remo australiano</strong><div class="mini">Usa una barra horizontal estable a altura de cintura/pecho. Coloca primero el cuerpo muy vertical. Aleja los pies solo cuando la técnica sea sólida.</div></div></div>
+<div class="parkitem"><div class="parkicon">🪜</div><div><strong>Colgado / dominada</strong><div class="mini">Usa una de las barras altas superiores. Para empezar, puedes mantener apoyo parcial de los pies si necesitas descargar peso.</div></div></div>
+<div class="parkitem"><div class="parkicon">🟰</div><div><strong>Apoyos / fondos futuros</strong><div class="mini">Las paralelas bajas del parque servirán más adelante. No son necesarias en tus primeras semanas.</div></div></div>
+<div class="parkitem"><div class="parkicon">⚠️</div><div><strong>Step-up</strong><div class="mini">Solo sobre una superficie plana, ancha y fija. No te subas a una barra redonda. Si no hay plataforma segura, sustituye el step-up por zancada inversa asistida.</div></div></div>
+<div class="parkitem"><div class="parkicon">🏖️</div><div><strong>Suelo de arena</strong><div class="mini">Comprueba que el apoyo no resbala ni se hunde demasiado. Para plancha/dead bug, usa una zona firme o esterilla si la arena resulta incómoda.</div></div></div>
+</div></div>
+<div class="card"><h2>Antes de cada sesión</h2><div class="checklist"><label><input type="checkbox"> <span>He revisado que la barra o apoyo está firme, seco y sin elementos cortantes.</span></label><label><input type="checkbox"> <span>Tengo espacio libre alrededor y el suelo ofrece apoyo estable.</span></label><label><input type="checkbox"> <span>Empiezo por el calentamiento; no pruebo máximos ni entreno al fallo.</span></label><label><input type="checkbox"> <span>Mi objetivo es terminar la mayoría de series en 🟡 Bien, no en 🔴 Difícil.</span></label></div></div>
+<div class="card"><h2>Técnica para dummies</h2><div class="line"><strong>1. Haz la versión fácil primero.</strong><br><span class="mini">La variante que puedes controlar vale más que una variante difícil mal ejecutada.</span></div><div class="line"><strong>2. Movimiento lento y estable.</strong><br><span class="mini">Evita rebotes, tirones y balanceos para “sacar” una repetición.</span></div><div class="line"><strong>3. Respira.</strong><br><span class="mini">No aguantes el aire durante toda la serie. Como regla sencilla: suelta aire durante la parte de mayor esfuerzo.</span></div><div class="line"><strong>4. Deja repeticiones en reserva.</strong><br><span class="mini">Al acabar deberías sentir que podrías hacer unas 2–3 repeticiones más la mayoría de veces.</span></div></div>
+<div class="card"><h2>Después de entrenar</h2><p class="muted">Camina unos minutos y deja que respiración y pulso vuelvan progresivamente a la normalidad. No necesitas una rutina larga de estiramientos para “validar” la sesión. Prioriza agua, comida normal, sueño y descanso entre días de calistenia.</p></div>
+<div class="card faq"><h2>FAQ</h2><details><summary>¿Tengo que acabar reventado?</summary><p>No. En esta fase buscamos constancia y técnica. La mayoría de series deberían quedar en 🟡 Bien.</p></details><details><summary>¿Qué hago si no llego a las repeticiones?</summary><p>Registra lo que realmente hiciste y marca el esfuerzo. El entrenador adaptativo mantendrá o facilitará el ejercicio.</p></details><details><summary>¿Qué pasa si falto un día?</summary><p>No dobles sesiones. Continúa con el plan de la semana; la app detecta sesiones no registradas.</p></details><details><summary>¿Puedo hacer una dominada para probar?</summary><p>No necesitas probar máximos al principio. Sigue la progresión: colgado, escápulas, negativas, asistidas y finalmente dominada estricta.</p></details><details><summary>¿Agujetas = buen entrenamiento?</summary><p>No necesariamente. Pueden aparecer al empezar, pero no son el objetivo ni una medida fiable de calidad.</p></details><details><summary>¿Cuándo paro?</summary><p>Para el ejercicio ante dolor agudo o repentino, mareo importante, dolor en el pecho o un síntoma que te haga sentir inseguro.</p></details></div>
+<button class="primary full" onclick="go('home')">VOLVER A HOY</button></section>
+
+<section id="trainpick" class="screen"><div class="eyebrow">Elige sesión</div><h1>ENTRENAR</h1><div id="allSessions" class="session-list"></div></section>
+<section id="exercises" class="screen"><div class="eyebrow">Biblioteca</div><h1>EJERCICIOS</h1><div class="card"><h2>Progresiones principales</h2><div id="exerciseLibrary"></div></div><div class="card"><h2>Camino a la primera dominada</h2><div id="pullupLadder2" class="ladder"></div></div></section>
+
+<section id="program" class="screen">
+<div class="eyebrow">Plan inicial</div><h1>8 SEMANAS</h1>
+<div class="card"><h2>Cómo funciona</h2><p class="muted">El plan avanza por bloques de dos semanas. La app mantiene la progresión adaptativa: si una variante aún no está dominada, no te obliga a subir aunque el calendario avance.</p><div id="programStatus"></div></div>
+<div id="programWeeks"></div>
+<div class="card evalbox"><h2>Evaluación · Semana 8</h2><p class="muted">No es una prueba máxima ni hay que llegar al fallo. Se compara tu nivel con tu propio punto de partida.</p><div class="line"><strong>Flexión</strong><br><span class="muted">Variante actual + repeticiones limpias dejando 2–3 en reserva.</span></div><div class="line"><strong>Remo</strong><br><span class="muted">Variante actual + repeticiones con cuerpo estable.</span></div><div class="line"><strong>Dominada</strong><br><span class="muted">Etapa alcanzada: colgado → escapular → negativa → asistida → estricta.</span></div><div class="line"><strong>Core</strong><br><span class="muted">Plancha controlada, sin buscar un máximo absoluto.</span></div><div class="line"><strong>Resultado</strong><br><span class="muted">La app conserva el nivel alcanzado y prepara el siguiente bloque sin reiniciar tu progreso.</span></div></div>
+</section>
+
+<section id="settings" class="screen"><div class="eyebrow">Personalización</div><h1>AJUSTES</h1><div class="card">
+<div class="switchrow"><div><strong>Modo oscuro</strong><div class="mini">Para interior o noche.</div></div><button class="toggle" id="darkToggle"><i></i></button></div>
+<div class="switchrow"><div><strong>Modo parque</strong><div class="mini">Alto contraste para pleno sol.</div></div><button class="toggle" id="sunToggle"><i></i></button></div>
+<div class="switchrow"><div><strong>Botones grandes</strong><div class="mini">Más cómodos durante el entrenamiento.</div></div><button class="toggle" id="bigToggle"><i></i></button></div>
+<div class="switchrow"><div><strong>Vibración</strong><div class="mini">Aviso al terminar descanso.</div></div><button class="toggle" id="vibToggle"><i></i></button></div>
+<div class="switchrow"><div><strong>Sonido</strong><div class="mini">Pitido al acabar el descanso.</div></div><button class="toggle" id="soundToggle"><i></i></button></div>
+<div class="switchrow"><div><strong>Pantalla encendida</strong><div class="mini">Usa Wake Lock si está disponible.</div></div><button class="toggle" id="wakeToggle"><i></i></button></div>
+</div><div class="card"><h2>Ayuda</h2><button class="secondary full" onclick="go('guide')">📘 ABRIR GUÍA DE USO Y SEGURIDAD</button><button id="resetOnboarding" class="secondary full" style="margin-top:8px">VER INTRODUCCIÓN DE NUEVO</button></div><div class="card"><h2>Datos</h2><button id="exportBtn" class="secondary full">EXPORTAR BACKUP JSON</button></div></section>
+<div class="nav">
+<button data-go="home" class="active">🏠<br>HOY</button><button data-go="trainpick">🏋️<br>ENTRENAR</button><button data-go="progress">📈<br>PROGRESO</button><button data-go="exercises">📚<br>EJERCICIOS</button><button data-go="settings">⚙️<br>AJUSTES</button>
+</div></div>
+
+<script>
+const GENERIC=`<svg viewBox="0 0 420 250"><circle class="head" cx="210" cy="55" r="16"/><line class="body" x1="210" y1="75" x2="210" y2="160"/><line class="body" x1="210" y1="105" x2="165" y2="135"/><line class="body" x1="210" y1="105" x2="255" y2="135"/><line class="body" x1="210" y1="160" x2="185" y2="225"/><line class="body" x1="210" y1="160" x2="235" y2="225"/></svg>`;
+const BAR=`<svg viewBox="0 0 420 250"><line class="bar" x1="85" y1="52" x2="335" y2="52"/><g class="poseA"><circle class="head" cx="210" cy="110" r="15"/><line class="body" x1="210" y1="128" x2="210" y2="190"/><line class="body" x1="210" y1="130" x2="175" y2="55"/><line class="body" x1="210" y1="130" x2="245" y2="55"/><line class="body" x1="210" y1="190" x2="188" y2="232"/><line class="body" x1="210" y1="190" x2="232" y2="232"/></g><g class="poseB"><circle class="head" cx="210" cy="95" r="15"/><line class="body" x1="210" y1="113" x2="210" y2="175"/><line class="body" x1="210" y1="115" x2="175" y2="55"/><line class="body" x1="210" y1="115" x2="245" y2="55"/><line class="body" x1="210" y1="175" x2="188" y2="220"/><line class="body" x1="210" y1="175" x2="232" y2="220"/></g></svg>`;
+
+
+function svgFor(ex){
+ const key=ex.base;
+ const common=(body)=>`<svg viewBox="0 0 420 250" role="img" aria-label="Animación esquemática de ${key}">${body}</svg>`;
+ if(key==='Sentadilla'||key==='Sentadilla suave')return common(`<line class="bar" x1="60" y1="225" x2="360" y2="225"/><g class="poseA"><circle class="head" cx="210" cy="55" r="15"/><line class="body" x1="210" y1="73" x2="210" y2="145"/><line class="body" x1="210" y1="145" x2="180" y2="220"/><line class="body" x1="210" y1="145" x2="240" y2="220"/></g><g class="poseB"><circle class="head" cx="210" cy="105" r="15"/><line class="body" x1="210" y1="123" x2="195" y2="165"/><line class="body" x1="195" y1="165" x2="155" y2="205"/><line class="body" x1="195" y1="165" x2="250" y2="205"/></g>`);
+ if(key==='Flexión')return common(`<line class="bar" x1="80" y1="115" x2="180" y2="115"/><g class="poseA"><circle class="head" cx="205" cy="92" r="13"/><line class="body" x1="220" y1="105" x2="315" y2="175"/><line class="body" x1="225" y1="112" x2="170" y2="115"/><line class="body" x1="315" y1="175" x2="350" y2="220"/></g><g class="poseB"><circle class="head" cx="195" cy="118" r="13"/><line class="body" x1="210" y1="130" x2="305" y2="180"/><line class="body" x1="215" y1="135" x2="170" y2="115"/><line class="body" x1="305" y1="180" x2="350" y2="220"/></g>`);
+ if(key==='Remo')return common(`<line class="bar" x1="75" y1="70" x2="345" y2="70"/><g class="poseA"><circle class="head" cx="210" cy="130" r="13"/><line class="body" x1="210" y1="145" x2="270" y2="205"/><line class="body" x1="210" y1="145" x2="175" y2="73"/><line class="body" x1="270" y1="205" x2="315" y2="225"/></g><g class="poseB"><circle class="head" cx="210" cy="105" r="13"/><line class="body" x1="210" y1="120" x2="270" y2="190"/><line class="body" x1="210" y1="120" x2="175" y2="73"/><line class="body" x1="270" y1="190" x2="315" y2="225"/></g>`);
+ if(key==='Dominada')return BAR;
+ if(key==='Plancha')return common(`<line class="bar" x1="60" y1="220" x2="360" y2="220"/><circle class="head" cx="125" cy="145" r="13"/><line class="body breathe" x1="140" y1="150" x2="285" y2="190"/><line class="body" x1="145" y1="155" x2="105" y2="215"/><line class="body" x1="285" y1="190" x2="330" y2="220"/>`);
+ if(key==='Step-up')return common(`<rect x="230" y="165" width="120" height="58" rx="5" fill="none" stroke="var(--muted)" stroke-width="6"/><g class="poseA"><circle class="head" cx="150" cy="70" r="14"/><line class="body" x1="150" y1="88" x2="150" y2="155"/><line class="body" x1="150" y1="155" x2="115" y2="220"/><line class="body" x1="150" y1="155" x2="250" y2="165"/></g><g class="poseB"><circle class="head" cx="260" cy="55" r="14"/><line class="body" x1="260" y1="73" x2="260" y2="135"/><line class="body" x1="260" y1="135" x2="245" y2="165"/><line class="body" x1="260" y1="135" x2="310" y2="165"/></g>`);
+ if(key==='Zancada inversa asistida')return common(`<line class="bar" x1="100" y1="70" x2="100" y2="225"/><g class="poseA"><circle class="head" cx="200" cy="65" r="14"/><line class="body" x1="200" y1="83" x2="200" y2="150"/><line class="body" x1="200" y1="105" x2="105" y2="100"/><line class="body" x1="200" y1="150" x2="175" y2="220"/><line class="body" x1="200" y1="150" x2="225" y2="220"/></g><g class="poseB"><circle class="head" cx="200" cy="85" r="14"/><line class="body" x1="200" y1="103" x2="200" y2="160"/><line class="body" x1="200" y1="120" x2="105" y2="100"/><line class="body" x1="200" y1="160" x2="155" y2="210"/><line class="body" x1="200" y1="160" x2="285" y2="210"/></g>`);
+ if(key==='Dead bug')return common(`<line class="bar" x1="60" y1="205" x2="360" y2="205"/><g class="poseA"><circle class="head" cx="115" cy="180" r="13"/><line class="body" x1="130" y1="185" x2="230" y2="185"/><line class="body" x1="175" y1="180" x2="150" y2="115"/><line class="body" x1="225" y1="185" x2="270" y2="135"/></g><g class="poseB"><circle class="head" cx="115" cy="180" r="13"/><line class="body" x1="130" y1="185" x2="230" y2="185"/><line class="body" x1="175" y1="180" x2="100" y2="145"/><line class="body" x1="225" y1="185" x2="320" y2="200"/></g>`);
+ if(key.startsWith('Curl'))return common(`<g class="poseA"><circle class="head" cx="210" cy="55" r="15"/><line class="body" x1="210" y1="73" x2="210" y2="155"/><line class="body" x1="210" y1="105" x2="165" y2="160"/><line class="body" x1="210" y1="105" x2="255" y2="160"/><circle cx="160" cy="170" r="9" fill="var(--muted)"/><circle cx="260" cy="170" r="9" fill="var(--muted)"/></g><g class="poseB"><circle class="head" cx="210" cy="55" r="15"/><line class="body" x1="210" y1="73" x2="210" y2="155"/><line class="body" x1="210" y1="105" x2="175" y2="105"/><line class="body" x1="175" y1="105" x2="165" y2="70"/><line class="body" x1="210" y1="105" x2="255" y2="160"/><circle cx="165" cy="65" r="9" fill="var(--muted)"/><circle cx="260" cy="170" r="9" fill="var(--muted)"/></g>`);
+ if(key==='Círculos de hombros')return common(`<circle class="head" cx="210" cy="55" r="15"/><line class="body" x1="210" y1="73" x2="210" y2="170"/><circle cx="165" cy="110" r="28" fill="none" stroke="var(--a)" stroke-width="4" stroke-dasharray="10 8"/><circle cx="255" cy="110" r="28" fill="none" stroke="var(--a)" stroke-width="4" stroke-dasharray="10 8"/><line class="body" x1="210" y1="105" x2="165" y2="110"/><line class="body" x1="210" y1="105" x2="255" y2="110"/>`);
+ if(key==='Movilidad de muñecas')return common(`<circle class="head" cx="210" cy="55" r="15"/><line class="body" x1="210" y1="73" x2="210" y2="165"/><line class="body" x1="210" y1="105" x2="150" y2="120"/><line class="body" x1="210" y1="105" x2="270" y2="120"/><circle class="breathe" cx="145" cy="120" r="18" fill="none" stroke="var(--a)" stroke-width="4"/><circle class="breathe" cx="275" cy="120" r="18" fill="none" stroke="var(--a)" stroke-width="4"/>`);
+ if(key==='Movilidad de cadera')return common(`<circle class="head" cx="210" cy="55" r="15"/><line class="body" x1="210" y1="73" x2="210" y2="155"/><ellipse class="breathe" cx="210" cy="150" rx="55" ry="25" fill="none" stroke="var(--a)" stroke-width="4" stroke-dasharray="10 8"/><line class="body" x1="210" y1="155" x2="180" y2="225"/><line class="body" x1="210" y1="155" x2="240" y2="225"/>`);
+ return GENERIC
+}
+
+const progressions={
+ 'Flexión':[
+  {name:'Flexión inclinada · barra alta',target:6,unit:'reps'},
+  {name:'Flexión inclinada · barra media',target:6,unit:'reps'},
+  {name:'Flexión inclinada · barra baja',target:6,unit:'reps'},
+  {name:'Flexión de suelo',target:5,unit:'reps'}
+ ],
+ 'Remo':[
+  {name:'Remo australiano · cuerpo muy vertical',target:5,unit:'reps'},
+  {name:'Remo australiano · inclinación media',target:5,unit:'reps'},
+  {name:'Remo australiano · cuerpo más horizontal',target:5,unit:'reps'}
+ ],
+ 'Dominada':[
+  {name:'Colgado pasivo',target:10,unit:'segundos'},
+  {name:'Retracción escapular',target:5,unit:'reps'},
+  {name:'Dominada negativa',target:3,unit:'reps'},
+  {name:'Dominada asistida',target:4,unit:'reps'},
+  {name:'Dominada estricta',target:1,unit:'rep'}
+ ]
+};
+
+function E(base,sets,rest,where,tech,prog=null,weighted=false,fixedTarget=null,unit='reps'){
+ return {base,sets,rest,where,tech,prog,weighted,fixedTarget,unit}
+}
+const warm=[E('Círculos de hombros',1,20,'De pie','Círculos lentos.',null,false,10),E('Movilidad de muñecas',1,20,'De pie','Movilidad suave.',null,false,10),E('Movilidad de cadera',1,20,'De pie','Círculos lentos.',null,false,8),E('Sentadilla suave',1,30,'Sin material','Baja cómodo.',null,false,8)];
+const A=[E('Sentadilla',2,60,'Suelo','Cadera atrás, rodillas alineadas.',null,false,8),E('Flexión',2,75,'Barra horizontal','Cuerpo alineado.','Flexión'),E('Remo',2,90,'Barra horizontal','Pecho hacia la barra.','Remo'),E('Step-up',2,60,'Plataforma plana y estable','Apoya todo el pie. Nunca uses una barra redonda como escalón; si no hay plataforma segura, haz zancada inversa asistida.',null,false,6,'reps/pierna'),E('Dominada',2,75,'Barra alta','Sigue el nivel indicado.','Dominada'),E('Plancha',2,60,'Suelo','Abdomen activo.',null,false,15,'segundos')];
+const B=[E('Sentadilla',2,60,'Suelo','Cadera atrás.',null,false,10),E('Flexión',2,75,'Barra horizontal','Cuerpo alineado.','Flexión'),E('Remo',2,90,'Barra horizontal','Pecho hacia la barra.','Remo'),E('Zancada inversa asistida',2,60,'Junto a barra','Paso atrás.',null,false,5,'reps/pierna'),E('Dominada',2,75,'Barra alta','Sigue el nivel indicado.','Dominada'),E('Dead bug',2,60,'Suelo','Extiende brazo y pierna contrarios.',null,false,5,'reps/lado')];
+const BA=[E('Curl alterno',3,60,'Mancuernas','Codos fijos.',null,true,8,'reps/brazo'),E('Curl martillo',2,60,'Mancuernas','Palmas hacia dentro.',null,true,8,'reps/brazo')];
+const BB=[E('Curl martillo',3,60,'Mancuernas','Codos pegados.',null,true,8,'reps/brazo'),E('Curl concentración',2,60,'Sentado','Codo apoyado.',null,true,8,'reps/brazo')];
+
+const sessions={'Calistenia A':{meta:'30–35 min · parque',items:[...warm,...A]},'Calistenia B':{meta:'30–35 min · parque',items:[...warm,...B]},'Bíceps A':{meta:'15–20 min · casa',items:BA},'Bíceps B':{meta:'15–20 min · casa',items:BB}};
+const schedule={1:'Calistenia A',2:'Bíceps A',3:'Calistenia B',4:'Bíceps B',5:'Calistenia A'},dn=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const $=x=>document.getElementById(x),screens=[...document.querySelectorAll('.screen')];
+
+let sessionStartedAt=0,exerciseStartedAt=0,clockId=null;
+function startClocks(resume=false){
+ if(!resume||!sessionStartedAt)sessionStartedAt=Date.now();
+ exerciseStartedAt=Date.now();
+ clearInterval(clockId);clockId=setInterval(updateClocks,1000);updateClocks()
+}
+function updateClocks(){
+ const st=$('sessionTime'),et=$('exerciseTime');if(st)st.textContent=fmt(Math.floor((Date.now()-sessionStartedAt)/1000));if(et)et.textContent=fmt(Math.floor((Date.now()-exerciseStartedAt)/1000))
+}
+function resetExerciseClock(){exerciseStartedAt=Date.now()}
+
+let sn='',items=[],i=0,set=1,count=0,rpe=null,pain=null,logs=[],tid=null,secs=0,currentExercise=null,currentVariant=null,currentAdvice=null,currentRest=null,wakeLock=null;
+
+function loadH(){try{
+ let h=JSON.parse(localStorage.getItem('ct_history_v09')||'[]');if(h.length)return h;
+ for(const k of ['ct_history_v08','ct_history_v07','ct_history_v06','ct_history_v05']){h=JSON.parse(localStorage.getItem(k)||'[]');if(h.length){localStorage.setItem('ct_history_v09',JSON.stringify(h));return h}}
+ return []}catch{return []}}
+function saveH(h){localStorage.setItem('ct_history_v09',JSON.stringify(h))}
+function loadLevels(){try{return JSON.parse(localStorage.getItem('ct_levels_v09')||localStorage.getItem('ct_levels_v08')||'{}')}catch{return {}}}
+function saveLevels(x){localStorage.setItem('ct_levels_v09',JSON.stringify(x))}
+function loadBiceps(){try{return JSON.parse(localStorage.getItem('ct_biceps_v09')||'{"weight":5,"deload":false}')}catch{return {weight:5,deload:false}}}
+function saveBiceps(x){localStorage.setItem('ct_biceps_v09',JSON.stringify(x))}
+function levelFor(prog){return Math.max(0,Math.min((loadLevels()[prog]??0),progressions[prog].length-1))}
+function weekStart(d){let x=new Date(d);x.setHours(0,0,0,0);let day=x.getDay()||7;x.setDate(x.getDate()-day+1);return x}
+function sessionsThisWeek(){const ws=weekStart(new Date());return loadH().filter(x=>new Date(x.date)>=ws)}
+function fatigueStatus(){
+ const h=loadH(), recent=h.slice(0,5), hard=recent.reduce((a,s)=>a+(s.logs||[]).filter(l=>l.rpe==='Difícil'||l.techQuality==='Mala').length,0);
+ const sets=recent.reduce((a,s)=>a+(s.logs||[]).length,0);
+ if(sets>=10 && hard/sets>=.35)return {deload:true,text:'Semana de descarga recomendada: demasiadas series difíciles o con técnica mala.'};
+ return {deload:false,text:'Carga normal: no hay señales claras de fatiga acumulada.'}
+}
+function missedPlan(){
+ const d=new Date(),dow=d.getDay(),week=sessionsThisWeek(),names=week.map(x=>x.session),expected=[];
+ for(let k=1;k<=Math.min(5,dow);k++)expected.push(currentCalPattern()[k]);
+ const missed=expected.filter((x,idx)=>!names.includes(x));
+ if(!missed.length)return {missed:false,text:'Plan semanal al día.'};
+ return {missed:true,text:`Has perdido ${missed.length} sesión(es). No las acumules: continúa con la sesión de hoy y evita doblar entrenamientos.`}
+}
+function recentFor(base,variantName){
+ const out=[];
+ for(const s of loadH()){
+  for(const l of (s.logs||[])){
+   const baseMatch=(l.base===base||l.exercise===base||l.exercise===variantName);
+   if(!baseMatch)continue;
+   if(variantName){
+    if(l.variant!==variantName)continue; // legacy logs without exact variant never trigger progression
+   }
+   out.push({...l,date:s.date,sessionId:s.id})
+  }
+ }
+ return out
+}
+function decide(ex){
+ const fatigue=fatigueStatus();
+ if(!ex.prog)return {action:'keep',level:null,variant:{name:ex.base,target:ex.fixedTarget,unit:ex.unit},reason:fatigue.deload?'Descarga activa: mantén el ejercicio sin progresar.':'Objetivo estable en esta fase.'};
+ const lvl=levelFor(ex.prog),ladder=progressions[ex.prog],v=ladder[lvl],recent=recentFor(ex.base,v.name).slice(0,6);
+ if(fatigue.deload)return {action:'keep',level:lvl,variant:v,reason:'Semana de descarga: se congela la progresión.'};
+ if(recent.length<4)return {action:'keep',level:lvl,variant:v,reason:'Faltan series para cambiar de variante.'};
+ const last=recent.slice(0,4),bad=last.filter(x=>x.rpe==='Difícil'||x.techQuality==='Mala'||x.pain==='Molestia'||x.pain==='Dolor').length,clean=last.filter(x=>(x.rpe==='Fácil'||x.rpe==='Bien')&&(x.techQuality||'Buena')==='Buena'&&(!x.pain||x.pain==='No')&&Number(x.value)>=v.target).length;
+ if(bad>=2&&lvl>0)return {action:'down',level:lvl-1,variant:ladder[lvl-1],reason:'Varias series recientes fueron demasiado exigentes.'};
+ if(clean>=4&&lvl<ladder.length-1)return {action:'up',level:lvl+1,variant:ladder[lvl+1],reason:'Has dominado esta variante con técnica buena.'};
+ return {action:'keep',level:lvl,variant:v,reason:bad>=2?'Mantén nivel y consolida técnica.':'Aún no hay dominio suficiente para cambiar.'}
+}
+function adaptiveRest(ex){
+ const recent=recentFor(ex.base,null).slice(0,4),base=ex.rest;
+ if(!recent.length)return {seconds:base,why:'Descanso base del programa.'};
+ const hard=recent.filter(x=>x.rpe==='Difícil').length;
+ const easy=recent.filter(x=>x.rpe==='Fácil').length;
+ if(hard>=2)return {seconds:Math.min(120,base+15),why:'+15 s por esfuerzo alto reciente.'};
+ if(easy>=3)return {seconds:Math.max(45,base-10),why:'−10 s porque las últimas series fueron fáciles.'};
+ return {seconds:base,why:'Descanso base: esfuerzo bien calibrado.'}
+}
+function bicepsAdvice(){
+ const h=loadH(), logs=[];for(const s of h){for(const l of (s.logs||[])){if(['Curl alterno','Curl martillo','Curl concentración'].includes(l.base||l.exercise))logs.push(l)}}
+ const st=loadBiceps();if(logs.length<6)return {weight:st.weight,action:'keep',text:`Mantén ${st.weight} kg por mancuerna hasta acumular más datos.`};
+ const last=logs.slice(0,6),clean=last.filter(x=>(x.rpe==='Fácil'||x.rpe==='Bien')&&(x.techQuality||'Buena')==='Buena'&&Number(x.value)>=8).length,bad=last.filter(x=>x.rpe==='Difícil'||x.techQuality==='Mala'||x.pain==='Molestia'||x.pain==='Dolor').length;
+ if(fatigueStatus().deload)return {weight:Math.max(1,st.weight-1),action:'down',text:`Descarga: usa aproximadamente ${Math.max(1,st.weight-1)} kg.`};
+ if(clean>=6)return {weight:st.weight+.5,action:'up',text:`Prueba ${st.weight+.5} kg si dispones de ese incremento.`};
+ if(bad>=3)return {weight:Math.max(1,st.weight-.5),action:'down',text:`Baja a ${Math.max(1,st.weight-.5)} kg.`};
+ return {weight:st.weight,action:'keep',text:`Mantén ${st.weight} kg.`}
+}
+function applyProgressions(){
+ const lv=loadLevels();
+ for(const p of Object.keys(progressions)){
+   const d=decide({base:p,prog:p,rest:75});
+   if(d.action!=='keep')lv[p]=d.level;
+ }
+ saveLevels(lv);
+ const ba=bicepsAdvice(),st=loadBiceps();if(ba.action!=='keep')st.weight=ba.weight;st.deload=fatigueStatus().deload;saveBiceps(st)
+}
+function uxSettings(){try{return Object.assign({dark:false,sun:false,big:true,vibration:true,sound:true,wake:true},JSON.parse(localStorage.getItem('ct_settings')||'{}'))}catch{return {dark:false,sun:false,big:true,vibration:true,sound:true,wake:true}}}
+function saveUxSettings(x){localStorage.setItem('ct_settings',JSON.stringify(x));applyUxSettings()}
+function applyUxSettings(){const x=uxSettings();document.body.classList.toggle('dark',x.dark&&!x.sun);document.body.classList.toggle('sun',x.sun);document.body.classList.toggle('big',x.big);[['darkToggle','dark'],['sunToggle','sun'],['bigToggle','big'],['vibToggle','vibration'],['soundToggle','sound'],['wakeToggle','wake']].forEach(([id,k])=>{const b=$(id);if(b)b.classList.toggle('on',!!x[k])})}
+function activeLoad(){try{return JSON.parse(localStorage.getItem('ct_active_session')||'null')}catch{return null}}
+function activeSave(){if(sn)localStorage.setItem('ct_active_session',JSON.stringify({sn,i,set,logs,date:new Date().toISOString()}))}
+function activeClear(){localStorage.removeItem('ct_active_session')}
+async function wakeOn(){if(!uxSettings().wake||!('wakeLock'in navigator))return;try{wakeLock=await navigator.wakeLock.request('screen')}catch{}}
+async function wakeOff(){try{if(wakeLock)await wakeLock.release()}catch{}wakeLock=null}
+function alertRest(){const x=uxSettings();if(x.vibration&&navigator.vibrate)navigator.vibrate([180,90,180]);if(x.sound){try{const A=window.AudioContext||window.webkitAudioContext,c=new A(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.07;o.start();o.stop(c.currentTime+.16)}catch{}}}
+function sessionButtons(id){const box=$(id);if(!box)return;box.innerHTML='';Object.entries(sessions).forEach(([n,x])=>{const b=document.createElement('button');b.className='session';b.innerHTML=`<strong>${n}</strong><small>${x.meta}</small>`;b.onclick=()=>start(n);box.appendChild(b)})}
+function renderExercises(){const box=$('exerciseLibrary');box.innerHTML='';for(const [name,ladder] of Object.entries(progressions)){const lvl=levelFor(name);box.innerHTML+=`<div class="exerciseRow"><strong>${name}</strong><div class="mini">Nivel ${lvl+1}/${ladder.length} · ${ladder[lvl].name}</div></div>`}const pl=$('pullupLadder2');pl.innerHTML='';const lvl=levelFor('Dominada');progressions.Dominada.forEach((x,j)=>{pl.innerHTML+=`<div class="stepcard ${j<lvl?'done':j===lvl?'current':''}"><div class="stepnum">${j<lvl?'✓':j+1}</div><div><strong>${x.name}</strong><div class="mini">${x.target} ${x.unit}</div></div></div>`})}
+function renderSettings(){applyUxSettings()}
+function resumeSession(){const a=activeLoad();if(!a||!sessions[a.sn])return;sn=a.sn;items=programItems(sn);i=Math.min(a.i||0,items.length-1);set=a.set||1;logs=a.logs||[];render();go('train');wakeOn()}
+function go(id){screens.forEach(x=>x.classList.remove('on'));$(id).classList.add('on');
+const onboardingPages=[
+ {title:'Empieza más fácil de lo que crees',body:'<p>No necesitas demostrar nada en la primera semana. La app empieza con variantes sencillas y aprende de tus resultados.</p><div class="safetyBox"><strong>Objetivo:</strong> acabar la mayoría de series en 🟡 Bien, dejando 2–3 repeticiones posibles.</div>'},
+ {title:'Esfuerzo sí; dolor no',body:'<p>Quemazón muscular, cansancio y respiración acelerada pueden ser normales. Un dolor agudo o repentino no es algo que debas atravesar.</p><div class="stopBox"><strong>🛑 Para</strong> si aparece dolor agudo, mareo importante, dolor en el pecho o un síntoma que te haga sentir inseguro.</div>'},
+ {title:'Usa las barras fáciles primero',body:'<p><strong>Flexión:</strong> barra alta. <strong>Remo:</strong> cuerpo muy vertical. <strong>Dominada:</strong> empieza por colgado con apoyo parcial de pies si lo necesitas.</p><p class="muted">En el parque hay barras a varias alturas; la altura y la inclinación son tus reguladores de dificultad.</p>'},
+ {title:'La técnica manda',body:'<p>Registra esfuerzo y calidad técnica después de cada serie. La app solo aumenta dificultad cuando acumulas resultados controlados.</p><p><strong>No entrenes al fallo, no recuperes una sesión perdida haciendo dos el mismo día y no uses barras redondas como escalón.</strong></p>'}
+];
+let onboardIndex=0;
+function renderOnboarding(){const box=$('onboarding');$('onboardTitle').textContent=onboardingPages[onboardIndex].title;$('onboardBody').innerHTML=onboardingPages[onboardIndex].body;$('onboardDots').innerHTML=onboardingPages.map((_,j)=>`<i class="${j===onboardIndex?'on':''}"></i>`).join('');$('onboardPrev').style.visibility=onboardIndex===0?'hidden':'visible';$('onboardNext').textContent=onboardIndex===onboardingPages.length-1?'EMPEZAR':'SIGUIENTE';box.classList.add('show')}
+function showOnboarding(){onboardIndex=0;renderOnboarding()}
+$('onboardPrev').onclick=()=>{if(onboardIndex>0){onboardIndex--;renderOnboarding()}};
+$('onboardNext').onclick=()=>{if(onboardIndex<onboardingPages.length-1){onboardIndex++;renderOnboarding()}else{localStorage.setItem('ct_onboarded_v12','1');$('onboarding').classList.remove('show')}};
+$('resetOnboarding').onclick=showOnboarding;
+
+document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===id));if(id==='home')home();if(id==='progress')renderProgress();if(id==='coach')renderCoach();if(id==='exercises')renderExercises();if(id==='settings')renderSettings();if(id==='program')renderProgram();scrollTo(0,0)}
+window.go=go;
+
+function home(){
+ const d=new Date(),rec=plannedSessionForToday(),miss=missedPlan(),fat=fatigueStatus(),a=$('statusAlert'),active=activeLoad();
+ $('day').textContent='Hoy es '+dn[d.getDay()]+'.';$('rec').textContent=rec||'Descanso';$('recmeta').textContent=rec?sessions[rec].meta:'Recuperación.';
+ $('startRec').style.display=rec?'block':'none';if(rec)$('startRec').onclick=()=>start(rec);
+ $('resumeBox').innerHTML=active?`<div class="card resume"><div class="eyebrow">Sesión pendiente</div><h2>${active.sn}</h2><button id="resumeBtn" class="primary full">CONTINUAR SESIÓN</button></div>`:'';if(active)$('resumeBtn').onclick=resumeSession;$('homeWeek').textContent=sessionsThisWeek().length+'/5';$('homePull').textContent=(levelFor('Dominada')+1)+'/5';a.innerHTML=`<div class="alert ${fat.deload?'bad':miss.missed?'warn':'good'}"><strong>${fat.deload?'Descarga recomendada':miss.missed?'Sesión perdida detectada':'Semana en orden'}</strong><br><span class="muted">${fat.deload?fat.text:miss.text}</span></div>`;
+ const box=$('sessionList');box.innerHTML='';Object.entries(sessions).forEach(([n,x])=>{let b=document.createElement('button');b.className='session';b.innerHTML=`<strong>${n}</strong><small>${x.meta}</small>`;b.onclick=()=>start(n);box.appendChild(b)})
+}
+function programItems(n){
+ const w=programWeekNumber();return sessions[n].items.map((x,idx)=>{
+   const y={...x};
+   if(n.startsWith('Calistenia') && idx>=4){
+     if(w>=5&&w<=7&&['Sentadilla','Flexión','Remo'].includes(y.base))y.sets=3;
+     if(w===8&&['Sentadilla','Flexión','Remo','Dominada'].includes(y.base))y.sets=Math.min(2,y.sets);
+   }
+   return y
+ })
+}
+function start(n){sn=n;items=programItems(n);i=0;set=1;logs=[];sessionStartedAt=Date.now();startClocks();activeSave();render();go('train');wakeOn()}
+function render(){
+ const ex=items[i];currentExercise=ex;currentAdvice=decide(ex);currentVariant=currentAdvice.variant;currentRest=adaptiveRest(ex);
+ $('step').textContent=`Ejercicio ${i+1} de ${items.length}`;$('stepDots').innerHTML=items.map((_,j)=>`<i class="${j<i?'done':j===i?'current':''}"></i>`).join('');$('ename').textContent=currentVariant.name;$('where').textContent=ex.where;$('anim').innerHTML=svgFor(ex);
+ $('set').textContent=`${set}/${ex.sets}`;$('target').textContent=`${currentVariant.target} ${currentVariant.unit}`;count=currentVariant.target;$('count').textContent=count;$('tech').textContent=ex.tech;$('prog').style.width=`${i/items.length*100}%`;
+ $('weightBox').style.display=ex.weighted?'block':'none';if(ex.weighted)$('weight').value=bicepsAdvice().weight;
+ rpe=null;pain=null;$('techQuality').value='Buena';document.querySelectorAll('[data-r]').forEach(b=>b.classList.remove('sel'));document.querySelectorAll('[data-pain]').forEach(b=>b.classList.remove('sel'));$('painHelp').textContent='El esfuerzo muscular es normal; el dolor agudo o repentino no lo es.';$('msg').textContent='';
+ $('coachTitle').textContent=currentAdvice.action==='up'?'↑ Progresión disponible':currentAdvice.action==='down'?'↓ Facilitar variante':'→ Mantener';
+ $('coachText').textContent=currentAdvice.reason;$('restHint').textContent=`Descanso previsto: ${currentRest.seconds} s`;
+ $('coachCard').className='card rec '+(currentAdvice.action==='up'?'good':currentAdvice.action==='down'?'bad':'');activeSave()
+}
+document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{rpe=b.dataset.r;document.querySelectorAll('[data-r]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')});
+document.querySelectorAll('[data-pain]').forEach(b=>b.onclick=()=>{pain=b.dataset.pain;document.querySelectorAll('[data-pain]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');if(pain==='Dolor')$('painHelp').innerHTML='<span class="stoptxt"><strong>Para este ejercicio.</strong> No intentes completar la serie con dolor.</span>';else if(pain==='Molestia')$('painHelp').innerHTML='<span class="warntxt">Reduce dificultad y comprueba si la molestia desaparece. Si aumenta, para.</span>';else $('painHelp').innerHTML='<span class="oktxt">Sin dolor: continúa si la técnica se mantiene.</span>';});
+$('barHelpBtn').onclick=()=>go('guide');
+$('minus').onclick=()=>{$('count').textContent=count=Math.max(0,count-1)};$('plus').onclick=()=>{$('count').textContent=count=Math.min(99,count+1)};
+$('complete').onclick=()=>{
+ if(!rpe){$('msg').textContent='Marca primero el esfuerzo.';return}
+ if(!pain){$('msg').textContent='Indica también si hubo dolor o molestia.';return}
+ if(pain==='Dolor'){$('msg').innerHTML='<span class="stoptxt"><strong>No completes esta serie.</strong> Para el ejercicio y usa una alternativa que no provoque dolor.</span>';return}
+ const ex=currentExercise;
+ logs.push({base:ex.base,exercise:currentVariant.name,variant:currentVariant.name,progression:ex.prog,set,value:count,unit:currentVariant.unit,rpe,techQuality:$('techQuality').value,weight:ex.weighted?Number($('weight').value||0):null,level:currentAdvice.level,restPrescribed:currentRest.seconds,pain});
+ if(i===items.length-1&&set===ex.sets)return finish();
+ secs=currentRest.seconds;$('restName').textContent=currentVariant.name;$('timer').textContent=fmt(secs);$('restWhy').textContent=currentRest.why;go('rest');clearInterval(tid);tid=setInterval(()=>{secs=Math.max(0,secs-1);$('timer').textContent=fmt(secs);if(!secs){clearInterval(tid);alertRest()}},1000)
+};
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function advance(){let ex=items[i];if(set<ex.sets)set++;else{i++;set=1;resetExerciseClock()}render();go('train')}
+$('add15').onclick=()=>{$('timer').textContent=fmt(secs+=15)};$('skip').onclick=()=>{clearInterval(tid);secs=0;$('timer').textContent='00:00'};$('cont').onclick=()=>{clearInterval(tid);advance()};$('pauseSession').onclick=()=>{activeSave();wakeOff();go('home')};$('quit').onclick=()=>{activeSave();wakeOff();go('home')};
+$('prevExercise').onclick=()=>{
+ if(i===0&&set===1){$('msg').textContent='Ya estás en el primer ejercicio.';return}
+ if(set>1)set--;else{i=Math.max(0,i-1);set=items[i].sets}
+ resetExerciseClock();render()
+};
+
+function milestoneFor(before,after){
+ if(before===0&&after===1)return ['Primera sesión','Ya tienes tu primer entrenamiento registrado.'];
+ if(after===5)return ['5 sesiones','Primer bloque de constancia completado.'];
+ if(after===10)return ['10 sesiones','Ya hay suficiente historial para que el entrenador te conozca mejor.'];
+ return null
+}
+function showMilestone(x){if(!x)return;$('milestoneTitle').textContent=x[0];$('milestoneText').textContent=x[1];$('milestone').classList.add('show')}
+$('milestoneClose').onclick=()=>$('milestone').classList.remove('show');
+
+function finish(){const beforeCount=loadH().length;if(!localStorage.getItem('ct_program_start'))localStorage.setItem('ct_program_start',new Date().toISOString().slice(0,10));let h=loadH();h.unshift({id:Date.now(),date:new Date().toISOString(),session:sn,logs});saveH(h);applyProgressions();activeClear();wakeOff();$('doneName').textContent=sn+' completada';$('doneStats').innerHTML=`<div class="line"><strong>${logs.length}</strong> series registradas</div><div class="line">Difíciles: ${logs.filter(x=>x.rpe==='Difícil').length} · Técnica mala: ${logs.filter(x=>x.techQuality==='Mala').length}</div>`;go('done');setTimeout(()=>showMilestone(milestoneFor(beforeCount,loadH().length)),250)}
+
+function allLogs(){const a=[];for(const s of loadH())for(const l of(s.logs||[]))a.push({...l,date:s.date,session:s.session});return a}
+function renderSixWeeks(){
+ const box=$('sixWeekChart');if(!box)return;const now=weekStart(new Date()),vals=[];
+ for(let k=5;k>=0;k--){const s=new Date(now);s.setDate(s.getDate()-7*k);const e=new Date(s);e.setDate(e.getDate()+7);const n=loadH().filter(x=>{const d=new Date(x.date);return d>=s&&d<e}).length;vals.push({n,label:s.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'})})}
+ const mx=Math.max(1,...vals.map(x=>x.n));box.innerHTML=vals.map(x=>`<div class="chartbar" title="${x.n} sesiones" style="height:${Math.max(4,x.n/mx*100)}%"><span>${x.label}</span></div>`).join('')
+}
+function renderCalendar(){
+ const box=$('calendar');if(!box)return;const now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),hits=new Set(loadH().filter(x=>{const d=new Date(x.date);return d.getFullYear()===y&&d.getMonth()===m}).map(x=>new Date(x.date).getDate()));
+ $('calendarTitle').textContent=now.toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+ box.innerHTML=['L','M','X','J','V','S','D'].map(x=>`<div class="calhead">${x}</div>`).join('');
+ let pad=(first.getDay()+6)%7;for(let z=0;z<pad;z++)box.innerHTML+='<div></div>';
+ for(let d=1;d<=last.getDate();d++)box.innerHTML+=`<div class="calcell ${hits.has(d)?'hit':''}">${d}</div>`
+}
+function renderExerciseSelector(){
+ const sel=$('exerciseSelect');if(!sel)return;const names=[...new Set(allLogs().map(x=>x.base||x.exercise).filter(Boolean))].sort();
+ sel.innerHTML=names.length?names.map(x=>`<option>${x}</option>`).join(''):'<option>Sin datos</option>';sel.onchange=renderExerciseEvolution;renderExerciseEvolution()
+}
+function renderExerciseEvolution(){
+ const sel=$('exerciseSelect'),box=$('exerciseEvolution');if(!sel||!box)return;const name=sel.value,vals=allLogs().filter(x=>(x.base||x.exercise)===name).slice(-12);
+ if(!vals.length){box.innerHTML='';$('exerciseSummary').textContent='Completa sesiones para ver la evolución.';return}
+ const mx=Math.max(1,...vals.map(x=>Number(x.value)||0));box.innerHTML=vals.map((x,j)=>`<div class="chartbar" style="height:${Math.max(4,(Number(x.value)||0)/mx*100)}%"><span>${j+1}</span></div>`).join('');
+ $('exerciseSummary').textContent=`Último: ${vals.at(-1).value} ${vals.at(-1).unit||''} · Mejor: ${Math.max(...vals.map(x=>Number(x.value)||0))}`
+}
+function renderPRs(){
+ const box=$('prs');if(!box)return;const best={};for(const l of allLogs()){const n=l.base||l.exercise,v=Number(l.value)||0;if(!best[n]||v>best[n].v)best[n]={v,unit:l.unit||''}}
+ const rows=Object.entries(best).sort((a,b)=>b[1].v-a[1].v).slice(0,8);box.innerHTML=rows.length?rows.map(([n,x])=>`<div class="pr"><span>${n}</span><strong>${x.v} ${x.unit}</strong></div>`).join(''):'<p class="muted">Aún no hay récords.</p>'
+}
+function renderBicepsVolume(){
+ const logs=allLogs().filter(x=>x.weight&&String(x.unit||'').includes('brazo'));const vol=logs.reduce((a,x)=>a+(Number(x.weight)||0)*(Number(x.value)||0)*2,0),maxW=Math.max(0,...logs.map(x=>Number(x.weight)||0));
+ $('bicepsVolume').innerHTML=`<div class="grid"><div class="metric"><small>Volumen registrado</small><strong>${Math.round(vol)}</strong><small>kg·reps</small></div><div class="metric"><small>Peso máximo</small><strong>${maxW}</strong><small>kg/mancuerna</small></div></div>`
+}
+function exportCSV(){
+ const rows=[['fecha','sesion','ejercicio','variante','serie','valor','unidad','rpe','tecnica','dolor','peso_kg']];
+ for(const s of loadH())for(const l of(s.logs||[]))rows.push([s.date,s.session,l.base||'',l.variant||l.exercise||'',l.set,l.value,l.unit||'',l.rpe||'',l.techQuality||'',l.pain||'',l.weight??'']);
+ const csv=rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');const b=new Blob([csv],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='calistenia_progreso.csv';a.click();URL.revokeObjectURL(a.href)
+}
+
+function renderProgress(){
+ let h=loadH(),ws=weekStart(new Date()),week=h.filter(x=>new Date(x.date)>=ws),sets=h.reduce((a,x)=>a+(x.logs||[]).length,0);
+ $('mSessions').textContent=h.length;$('mSets').textContent=sets;$('mWeek').textContent=week.length+'/5';
+ const due=Math.max(1,Math.min(5,new Date().getDay()||0));$('mCompliance').textContent=Math.min(100,Math.round(week.length/due*100))+'%';
+ $('history').innerHTML=h.length?h.slice(0,20).map(x=>`<div class="line"><strong>${x.session}</strong> <span class="tag">${new Date(x.date).toLocaleDateString('es-ES')}</span><br><span class="muted">${(x.logs||[]).length} series</span></div>`).join(''):'<p class="muted">Todavía no hay sesiones.</p>';
+ renderSixWeeks();renderCalendar();renderExerciseSelector();renderPRs();renderBicepsVolume();
+ const ec=$('exportCsv'),ej=$('exportJson2');if(ec)ec.onclick=exportCSV;if(ej)ej.onclick=()=>$('exportBtn')?.click()
+}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.go));sessionButtons('allSessions');[['darkToggle','dark'],['sunToggle','sun'],['bigToggle','big'],['vibToggle','vibration'],['soundToggle','sound'],['wakeToggle','wake']].forEach(([id,k])=>{const b=$(id);if(b)b.onclick=()=>{const x=uxSettings();x[k]=!x[k];if(k==='dark'&&x.dark)x.sun=false;if(k==='sun'&&x.sun)x.dark=false;saveUxSettings(x);renderSettings()}});$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({history:loadH(),levels:loadLevels(),biceps:loadBiceps(),settings:uxSettings()},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='calistenia_trainer_backup.json';a.click();URL.revokeObjectURL(a.href)};document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&sn)wakeOn()});applyUxSettings();home();if(!localStorage.getItem('ct_onboarded_v12'))showOnboarding();
+</script>
+
+<script>
+let deferredInstallPrompt=null;
+const installBar=document.getElementById('installBar');
+const installBtn=document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  installBar?.classList.add('show');
+});
+installBtn?.addEventListener('click',async()=>{
+  if(!deferredInstallPrompt)return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt=null;
+  installBar.classList.remove('show');
+});
+window.addEventListener('appinstalled',()=>{
+  deferredInstallPrompt=null;
+  installBar?.classList.remove('show');
+});
+
+function updateNetworkUI(){
+  const box=document.getElementById('netStatus'), txt=document.getElementById('netText');
+  if(!box||!txt)return;
+  if(navigator.onLine){
+    box.classList.remove('offline');
+    txt.textContent='Online · la app queda preparada para funcionar sin conexión.';
+  }else{
+    box.classList.add('offline');
+    txt.textContent='Sin conexión · funcionando en modo offline.';
+  }
+}
+window.addEventListener('online',updateNetworkUI);
+window.addEventListener('offline',updateNetworkUI);
+updateNetworkUI();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+  });
+}
+</script>
+
+</body></html>

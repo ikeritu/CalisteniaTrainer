@@ -22,3 +22,9 @@ Esta versión cierra el trabajo de desarrollo pendiente de las fases 1–8 antes
 - Validación de legibilidad a pleno sol y uso con una mano/manos sudadas.
 - Validación real del service worker/offline tras instalar desde HTTPS.
 - Beta de entrenamiento de 2 semanas.
+
+## Probar localmente
+    python3 -m http.server 8080
+
+Después:
+    http://localhost:8080
