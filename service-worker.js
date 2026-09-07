@@ -1,8 +1,9 @@
-const CACHE='calistenia-trainer-v1.4.2';
+const CACHE='calistenia-trainer-v1.5.0-beta';
 const CORE=[
   './manifest.json',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './coach2.js?v=150'
 ];
 
 const APP_FIX=`
@@ -60,12 +61,21 @@ function patchHtml(text){
   if(!out.includes('/* v1.4.2 runtime recovery')){
     out=out.replace('function home(){',APP_FIX+'\nfunction home(){');
   }
+  out=out.replace('<title>Calistenia Trainer v1.4 RC · Seguridad y guía</title>','<title>Calistenia Trainer v1.5 Beta · Coach 2.0</title>');
+  out=out.replace('Calistenia Trainer · v1.4 RC','Calistenia Trainer · v1.5 Beta · Coach 2.0');
+  out=out.replace('<div class="eyebrow">Fase 5 cerrada</div><h1>ENTRENADOR</h1>','<div class="eyebrow">Coach adaptativo 2.0 · Fase 9C</div><h1>ENTRENADOR</h1>');
+  if(!out.includes('data-go="coach"')){
+    out=out.replace('<button data-go="settings">⚙️<br>AJUSTES</button>','<button data-go="coach">🧠<br>COACH</button><button data-go="settings">⚙️<br>AJUSTES</button>');
+  }
+  if(!out.includes('./coach2.js?v=150')){
+    out=out.replace('</body>','<script src="./coach2.js?v=150"></script>\n</body>');
+  }
   return out;
 }
 
 async function getPatchedIndex(){
   try{
-    const response=await fetch('./index.html?build=142',{cache:'no-store'});
+    const response=await fetch('./index.html?build=150',{cache:'no-store'});
     const text=patchHtml(await response.text());
     const patched=new Response(text,{status:200,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'}});
     const cache=await caches.open(CACHE);
